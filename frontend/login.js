@@ -12,6 +12,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     if (!res.ok) throw new Error();
     const { token } = await res.json();
     localStorage.setItem('token', token);
+
     window.location.href = 'vote.html';
   } catch {
     document.getElementById('error').classList.remove('hidden');
