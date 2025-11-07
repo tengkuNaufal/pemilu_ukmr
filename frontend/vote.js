@@ -12,12 +12,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   candidates.forEach(c => {
     const card = document.createElement('div');
-    card.className = 'bg-white p-6 rounded-xl shadow-lg flex flex-col items-center space-y-4';
+    card.className = 'card bg-white p-6 rounded-2xl shadow-md flex flex-col items-center text-center space-y-4 border border-green-100';
     card.innerHTML = `
-      <img src="${c.foto_url}" class="w-32 h-32 rounded-full object-cover border-4 border-green-500">
-      <h2 class="text-xl font-bold">${c.nama}</h2>
-      <p class="italic text-sm text-gray-600">${c.visi.slice(0, 100)}...</p>
-      <button class="voteBtn bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg w-full" data-id="${c.id}">Pilih</button>
+      <img src="${c.foto_url}" alt="${c.nama}" class="w-36 h-36 rounded-full object-cover border-4 border-green-600 shadow-md">
+      <h2 class="text-xl font-bold text-green-700">${c.nama}</h2>
+      <p class="text-sm text-gray-600 italic line-clamp-3">${c.visi.slice(0, 100)}...</p>
+      <button class="voteBtn bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white px-4 py-2 rounded-full w-full font-semibold transition-all duration-200" data-id="${c.id}">
+        Pilih Kandidat
+      </button>
     `;
     container.appendChild(card);
   });
@@ -35,8 +37,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       },
       body: JSON.stringify({ candidate_id })
     });
+
     if (res.ok) {
-      alert('Voting berhasil!');
+      alert('Voting berhasil! Terima kasih sudah berpartisipasi.');
       window.location.href = 'thankyou.html';
     } else {
       const { message } = await res.json();

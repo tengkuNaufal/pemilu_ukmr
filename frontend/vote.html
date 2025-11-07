@@ -2,12 +2,54 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Pemilih PEMILU UKMR</title>
+  <title>PEMILU UKMR 2025</title>
   <script defer src="vote.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom right, #fdf6e3, #fff8dc);
+      overflow-x: hidden;
+      position: relative;
+    }
+    .card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+    .ornamen {
+      position: absolute;
+      z-index: -1;
+      opacity: 0.15;
+      pointer-events: none;
+      fill: #15803d; /* hijau tua */
+    }
+  </style>
 </head>
-<body class="bg-yellow-100 p-8">
-  <h1 class="text-3xl font-bold text-center mb-8 text-green-700">Pilih Ketua UKMR 2025</h1>
-  <div id="kandidatContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto"></div>
+
+<body class="min-h-screen flex flex-col items-center py-10 relative">
+  <!-- Ornamen pojok kiri atas -->
+  <svg class="ornamen top-0 left-0 w-48 sm:w-64 md:w-80" viewBox="0 0 100 100" preserveAspectRatio="xMinYMin meet">
+    <path d="M0,100 Q30,40 100,0 L0,0 Z" />
+  </svg>
+
+  <!-- Ornamen pojok kanan bawah -->
+  <svg class="ornamen bottom-0 right-0 w-48 sm:w-64 md:w-80 rotate-180" viewBox="0 0 100 100" preserveAspectRatio="xMaxYMax meet">
+    <path d="M0,100 Q30,40 100,0 L0,0 Z" />
+  </svg>
+
+  <div class="text-center mb-10">
+    <h1 class="text-4xl font-bold text-green-700 mb-2">PEMILU UKMR 2025</h1>
+    <p class="text-lg text-gray-600">Pilih Ketua Unit Kebudayaan Melayu Riau dengan bijak</p>
+  </div>
+
+  <div id="kandidatContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl px-6 w-full z-10"></div>
+
+  <footer class="mt-16 text-center text-gray-500 text-sm z-10">
+    © 2025 UKMR - Universitas Anda. Semua hak dilindungi.
+  </footer>
 </body>
 </html>
