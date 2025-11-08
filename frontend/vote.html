@@ -25,7 +25,7 @@
       z-index: -1;
       opacity: 0.15;
       pointer-events: none;
-      fill: #15803d; /* hijau tua */
+      fill: #15803d;
     }
   </style>
 </head>
@@ -41,9 +41,12 @@
     <path d="M0,100 Q30,40 100,0 L0,0 Z" />
   </svg>
 
-  <div class="text-center mb-10">
+  <div class="text-center mb-10 z-10">
     <h1 class="text-4xl font-bold text-green-700 mb-2">PEMILU UKMR 2025</h1>
-    <p class="text-lg text-gray-600">Pilih Ketua Unit Kebudayaan Melayu Riau dengan bijak</p>
+    <p class="text-lg text-gray-600 mb-4">Pilih Ketua Unit Kebudayaan Melayu Riau dengan bijak</p>
+    
+    <!-- Countdown Timer -->
+    <div id="countdown" class="text-2xl font-semibold text-green-800 bg-yellow-100 px-6 py-3 rounded-lg inline-block shadow-md"></div>
   </div>
 
   <div id="kandidatContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl px-6 w-full z-10"></div>
@@ -51,5 +54,39 @@
   <footer class="mt-16 text-center text-gray-500 text-sm z-10">
     © 2025 UKMR - Institut Teknologi Bandung. Semua hak dilindungi.
   </footer>
+
+  <script>
+  // === Countdown Timer ===
+  const countdownElement = document.getElementById('countdown');
+  const targetDate = new Date('November 9, 2025 23:59:00').getTime();
+
+  function format(num) {
+    return num.toString().padStart(2, '0');
+  }
+
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+
+    if (distance <= 0) {
+      countdownElement.textContent = 'Waktu pemilihan telah berakhir.';
+      countdownElement.classList.remove('bg-yellow-100');
+      countdownElement.classList.add('bg-red-100', 'text-red-700');
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    countdownElement.textContent = 
+      `${format(days)} : ${format(hours)} : ${format(minutes)} : ${format(seconds)}`;
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+
 </body>
 </html>
