@@ -1,3 +1,11 @@
+async function fetchCandidates() {
+  const res = await fetch('/api/candidates', {
+    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+  });
+  if (!res.ok) return alert('Gagal ambil kandidat');
+  return res.json();
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const candidates = await fetchCandidates();
   const container = document.getElementById('kandidatContainer');
