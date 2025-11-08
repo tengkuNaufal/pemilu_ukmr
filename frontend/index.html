@@ -2,41 +2,22 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Selamat Datang di PEMILU UKMR</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
-    
     @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
-    
-    .animate-pulse-custom {
-      animation: pulse 2s infinite;
-    }
-    
-    .animate-spin-slow {
-      animation: spin 8s linear infinite;
-    }
+    .animate-pulse-custom { animation: pulse 2s infinite; }
+    .animate-spin-slow { animation: spin 8s linear infinite; }
 
-    /* Styles for zigzag animation */
     .square {
-      width: 60px;
-      height: 60px;
       background: #FFD527;
       position: absolute;
       border-radius: 8px;
@@ -65,7 +46,7 @@
       pointer-events: none;
       z-index: 1;
     }
-    
+
     .circle-image {
       width: 100px;
       height: 100px;
@@ -81,15 +62,15 @@
   </style>
 </head>
 <body class="flex items-center justify-center p-4">
-  <!-- Zigzag animation container -->
+  <!-- Kotak latar statik -->
   <div id="group"></div>
-  
-  <!-- Circle image that spins -->
-  <img src="images/Untitled21_20250810185546.png" 
-       alt="Profile" 
+
+  <!-- Logo berputar -->
+  <img src="images/Untitled21_20250810185546.png"
+       alt="Logo UKMR"
        class="circle-image animate-spin-slow">
-  
-  <!-- Welcome content -->
+
+  <!-- Konten utama -->
   <div class="content-container bg-[#F1EAD1] p-8 md:p-12 rounded-xl shadow-2xl text-center max-w-lg mx-auto">
     <h1 class="text-3xl md:text-4xl font-bold text-green-700 mb-4">
       Selamat Datang di Sistem E-Voting UKMR
@@ -97,101 +78,45 @@
     <p class="text-gray-600 mb-8">
       Silakan masuk untuk menggunakan hak pilih Anda. Klik tombol di bawah ini untuk menuju halaman login.
     </p>
-    <a href="/login.html" 
+    <a href="/login.html"
        class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold w-full md:w-auto px-8 py-4 rounded-lg text-lg transition-transform transform hover:scale-105 animate-pulse-custom">
       Menuju Halaman Login
     </a>
   </div>
 
   <script>
-    // Zigzag animation code
     const group = document.getElementById("group");
-    const squareSize = 60;
-    let totalSquares, trackLength;
-    let offsetX = 0;
-    const squares = [];
 
-    function createSquares() {
+    function createStaticSquares() {
       group.innerHTML = "";
-      squares.length = 0;
-      offsetX = 0;
+      const squareSize = 60;
+      const totalSquares = Math.ceil(window.innerWidth / squareSize) + 1;
 
-      totalSquares = Math.ceil(window.innerWidth / squareSize) + 2;
-      trackLength = totalSquares * squareSize;
-
-      // Bottom row (moving left)
-      for (let set = 0; set < 2; set++) {
-        for (let i = 0; i < totalSquares; i++) {
-          const square = document.createElement("div");
-          square.className = "square";
-
-          let x = i * squareSize + set * trackLength;
-          let y = (i % 2 === 0) 
-            ? window.innerHeight - 120 
-            : window.innerHeight - 60;
-
-          square.style.left = x + "px";
-          square.style.top = y + "px";
-          
-          group.appendChild(square);
-          squares.push({ el: square, baseX: x, y, dir: "left" });
-        }
+      // Baris bawah (zigzag)
+      for (let i = 0; i < totalSquares; i++) {
+        const square = document.createElement("div");
+        square.className = "square";
+        square.style.width = squareSize + "px";
+        square.style.height = squareSize + "px";
+        square.style.left = i * squareSize + "px";
+        square.style.top = (i % 2 === 0) ? (window.innerHeight - 120) + "px" : (window.innerHeight - 60) + "px";
+        group.appendChild(square);
       }
 
-      // Top row (moving right)
-      for (let set = 0; set < 2; set++) {
-        for (let i = 0; i < totalSquares; i++) {
-          const square = document.createElement("div");
-          square.className = "square";
-
-          let x = i * squareSize - set * trackLength;
-          let y = (i % 2 === 0) 
-            ? 60 
-            : 0;
-
-          square.style.left = x + "px";
-          square.style.top = y + "px";
-          
-          group.appendChild(square);
-          squares.push({ el: square, baseX: x, y, dir: "right" });
-        }
+      // Baris atas (zigzag)
+      for (let i = 0; i < totalSquares; i++) {
+        const square = document.createElement("div");
+        square.className = "square";
+        square.style.width = squareSize + "px";
+        square.style.height = squareSize + "px";
+        square.style.left = i * squareSize + "px";
+        square.style.top = (i % 2 === 0) ? "0px" : "60px";
+        group.appendChild(square);
       }
     }
 
-    createSquares();
-    window.addEventListener("resize", createSquares);
-
-    function move() {
-      offsetX += 0.2;
-      
-      if (offsetX > trackLength) {
-        offsetX = 0;
-      }
-
-      squares.forEach(sq => {
-        let x;
-        if (sq.dir === "left") {
-          x = sq.baseX - offsetX;
-        } else {
-          x = sq.baseX + offsetX;
-        }
-        
-        if (x < -squareSize) {
-          x += 2 * trackLength;
-          sq.baseX += 2 * trackLength;
-        } else if (x > window.innerWidth + squareSize) {
-          x -= 2 * trackLength;
-          sq.baseX -= 2 * trackLength;
-        }
-        
-        sq.el.style.left = x + "px";
-        sq.el.style.top = sq.y + "px";
-      });
-
-      requestAnimationFrame(move);
-    }
-
-    move();
+    createStaticSquares();
+    window.addEventListener("resize", createStaticSquares);
   </script>
 </body>
 </html>

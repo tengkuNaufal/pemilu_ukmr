@@ -2,53 +2,29 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Login UKMR</title>
+  <title>Login Pemilu UKMR</title>
   <script defer src="login.js"></script>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Selamat Datang di PEMILU UKMR</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
-    
     @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
-    
-    .animate-pulse-custom {
-      animation: pulse 2s infinite;
-    }
-    
-    .animate-spin-slow {
-      animation: spin 8s linear infinite;
-    }
+    .animate-pulse-custom { animation: pulse 2s infinite; }
+    .animate-spin-slow { animation: spin 8s linear infinite; }
 
-    /* Styles for zigzag animation */
+    /* Kotak latar */
     .square {
-      width: 60px;
-      height: 60px;
       background: #FFD527;
       position: absolute;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
       z-index: 0;
-    }
-
-    .content-container {
-      position: relative;
-      z-index: 10;
     }
 
     body {
@@ -67,7 +43,7 @@
       pointer-events: none;
       z-index: 1;
     }
-    
+
     .circle-image {
       width: 100px;
       height: 100px;
@@ -80,117 +56,68 @@
       border: 4px solid white;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
     }
+
+    .content-container {
+      position: relative;
+      z-index: 10;
+    }
   </style>
 </head>
+
 <body class="flex items-center justify-center p-4">
-  <!-- Zigzag animation container -->
+  <!-- Latar kotak kuning -->
   <div id="group"></div>
-  
-  <!-- Circle image that spins -->
+
+  <!-- Logo berputar -->
   <img src="images/Untitled21_20250810185546.png" 
-       alt="Profile" 
+       alt="Logo UKMR" 
        class="circle-image animate-spin-slow">
-  
-  <!-- Welcome content -->
-  <div class="bg-white p-8 rounded-xl shadow-xl w-96 space-y-4">
+
+  <!-- Form login -->
+  <div class="content-container bg-white p-8 rounded-xl shadow-xl w-full max-w-md space-y-4">
     <h1 class="text-2xl font-bold text-center text-green-700">Login Pemilu UKMR</h1>
     <form id="loginForm" class="space-y-3">
-      <input type="text" id="nim" placeholder="Masukkan NIM" required class="w-full p-3 border rounded-lg">
-      <input type="password" id="password" placeholder="Masukkan Password" required class="w-full p-3 border rounded-lg">
-      <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold w-full p-3 rounded-lg">Login</button>
+      <input type="text" id="nim" placeholder="Masukkan NIM" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-600 outline-none">
+      <input type="password" id="password" placeholder="Masukkan Password" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-600 outline-none">
+      <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold w-full p-3 rounded-lg transition-transform transform hover:scale-105 animate-pulse-custom">Login</button>
     </form>
     <p id="error" class="text-red-500 text-sm text-center hidden">NIM atau password salah!</p>
   </div>
 
   <script>
-    // Zigzag animation code
+    // Kotak latar belakang statik (tidak bergerak)
     const group = document.getElementById("group");
-    const squareSize = 60;
-    let totalSquares, trackLength;
-    let offsetX = 0;
-    const squares = [];
 
-    function createSquares() {
+    function createStaticSquares() {
       group.innerHTML = "";
-      squares.length = 0;
-      offsetX = 0;
+      const squareSize = 60;
+      const totalSquares = Math.ceil(window.innerWidth / squareSize) + 1;
 
-      totalSquares = Math.ceil(window.innerWidth / squareSize) + 2;
-      trackLength = totalSquares * squareSize;
-
-      // Bottom row (moving left)
-      for (let set = 0; set < 2; set++) {
-        for (let i = 0; i < totalSquares; i++) {
-          const square = document.createElement("div");
-          square.className = "square";
-
-          let x = i * squareSize + set * trackLength;
-          let y = (i % 2 === 0) 
-            ? window.innerHeight - 120 
-            : window.innerHeight - 60;
-
-          square.style.left = x + "px";
-          square.style.top = y + "px";
-          
-          group.appendChild(square);
-          squares.push({ el: square, baseX: x, y, dir: "left" });
-        }
+      // Baris bawah
+      for (let i = 0; i < totalSquares; i++) {
+        const square = document.createElement("div");
+        square.className = "square";
+        square.style.width = squareSize + "px";
+        square.style.height = squareSize + "px";
+        square.style.left = i * squareSize + "px";
+        square.style.top = (i % 2 === 0) ? (window.innerHeight - 120) + "px" : (window.innerHeight - 60) + "px";
+        group.appendChild(square);
       }
 
-      // Top row (moving right)
-      for (let set = 0; set < 2; set++) {
-        for (let i = 0; i < totalSquares; i++) {
-          const square = document.createElement("div");
-          square.className = "square";
-
-          let x = i * squareSize - set * trackLength;
-          let y = (i % 2 === 0) 
-            ? 60 
-            : 0;
-
-          square.style.left = x + "px";
-          square.style.top = y + "px";
-          
-          group.appendChild(square);
-          squares.push({ el: square, baseX: x, y, dir: "right" });
-        }
+      // Baris atas
+      for (let i = 0; i < totalSquares; i++) {
+        const square = document.createElement("div");
+        square.className = "square";
+        square.style.width = squareSize + "px";
+        square.style.height = squareSize + "px";
+        square.style.left = i * squareSize + "px";
+        square.style.top = (i % 2 === 0) ? "0px" : "60px";
+        group.appendChild(square);
       }
     }
 
-    createSquares();
-    window.addEventListener("resize", createSquares);
-
-    function move() {
-      offsetX += 0.2;
-      
-      if (offsetX > trackLength) {
-        offsetX = 0;
-      }
-
-      squares.forEach(sq => {
-        let x;
-        if (sq.dir === "left") {
-          x = sq.baseX - offsetX;
-        } else {
-          x = sq.baseX + offsetX;
-        }
-        
-        if (x < -squareSize) {
-          x += 2 * trackLength;
-          sq.baseX += 2 * trackLength;
-        } else if (x > window.innerWidth + squareSize) {
-          x -= 2 * trackLength;
-          sq.baseX -= 2 * trackLength;
-        }
-        
-        sq.el.style.left = x + "px";
-        sq.el.style.top = sq.y + "px";
-      });
-
-      requestAnimationFrame(move);
-    }
-
-    move();
+    createStaticSquares();
+    window.addEventListener("resize", createStaticSquares);
   </script>
 </body>
 </html>

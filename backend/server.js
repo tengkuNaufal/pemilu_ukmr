@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { Pool } = require('pg');  // ganti mysql2 dengan pg
+const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
@@ -18,21 +18,28 @@ const db = new Pool({
   password: process.env.DB_PASS,
   database: process.env.DB_DATABASE,
   port: process.env.DB_PORT || 5432,
-  ssl: { rejectUnauthorized: false } // biasanya Supabase perlu SSL
+  ssl: { rejectUnauthorized: false } // penting untuk Supabase
 });
 
-// LOGIN
+// ========== LOGIN USER ==========
 app.post('/api/login', async (req, res) => {
   const { nim, password } = req.body;
   try {
     const result = await db.query('SELECT * FROM users WHERE nim = $1', [nim]);
-    if (result.rows.length === 0) return res.status(401).json({ message: 'NIM tidak ditemukan' });
+    if (result.rows.length === 0)
+      return res.status(401).json({ message: 'NIM tidak ditemukan' });
 
     const user = result.rows[0];
     if (!await bcrypt.compare(password, user.password_hash)) {
       return res.status(401).json({ message: 'Password salah' });
     }
-    const token = jwt.sign({ user_id: user.id, nim: user.nim, role: 'user' }, process.env.JWT_SECRET, { expiresIn: '2h' });
+
+    const token = jwt.sign(
+      { user_id: user.id, nim: user.nim, role: 'user' },
+      process.env.JWT_SECRET,
+      { expiresIn: '2h' }
+    );
+
     res.json({ token });
   } catch (err) {
     console.error(err);
@@ -40,29 +47,33 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// LOGIN ADMIN
+// ========== LOGIN ADMIN ==========
 app.post('/api/admin/login', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const result = await db.query('SELECT * FROM admins WHERE username = $1', [username]);
-        if (result.rows.length === 0) {
-            return res.status(401).json({ message: 'Username tidak ditemukan' });
-        }
+  const { username, password } = req.body;
+  try {
+    const result = await db.query('SELECT * FROM admins WHERE username = $1', [username]);
+    if (result.rows.length === 0)
+      return res.status(401).json({ message: 'Username tidak ditemukan' });
 
-        const admin = result.rows[0];
-        if (!await bcrypt.compare(password, admin.password_hash)) {
-            return res.status(401).json({ message: 'Password salah' });
-        }
-
-        const token = jwt.sign({ admin_id: admin.id, username: admin.username, role: 'admin' }, process.env.JWT_SECRET, { expiresIn: '2h' });
-        res.json({ token });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
+    const admin = result.rows[0];
+    if (!await bcrypt.compare(password, admin.password_hash)) {
+      return res.status(401).json({ message: 'Password salah' });
     }
+
+    const token = jwt.sign(
+      { admin_id: admin.id, username: admin.username, role: 'admin' },
+      process.env.JWT_SECRET,
+      { expiresIn: '2h' }
+    );
+
+    res.json({ token });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
-// Middleware auth
+// ========== MIDDLEWARE AUTENTIKASI ==========
 function auth(req, res, next) {
   const bearer = req.headers.authorization;
   if (!bearer) return res.status(401).json({ message: 'Token hilang' });
@@ -75,15 +86,14 @@ function auth(req, res, next) {
   }
 }
 
-// middleware utk admin
 function adminOnly(req, res, next) {
-    if (!req.user || !req.user.is_admin) {
-        return res.status(403).json({ message: 'Akses ditolak: hanya untuk admin' });
-    }
-    next();
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Akses ditolak: hanya untuk admin' });
+  }
+  next();
 }
 
-// Get candidates
+// ========== DATA KANDIDAT ==========
 app.get('/api/candidates', auth, async (req, res) => {
   try {
     const result = await db.query('SELECT id, nama, foto_url, visi FROM candidates');
@@ -94,13 +104,15 @@ app.get('/api/candidates', auth, async (req, res) => {
   }
 });
 
-// Vote
+// ========== VOTING ==========
 app.post('/api/vote', auth, async (req, res) => {
   if (req.user.role !== 'user') {
-      return res.status(403).json({ message: 'Admin tidak bisa memilih.' });
+    return res.status(403).json({ message: 'Admin tidak bisa memilih.' });
   }
+
   const user_id = req.user.user_id;
   const { candidate_id } = req.body;
+
   try {
     const u = await db.query('SELECT has_voted FROM users WHERE id = $1', [user_id]);
     if (!u.rows.length) return res.status(404).json({ message: 'User tidak ditemukan' });
@@ -108,6 +120,7 @@ app.post('/api/vote', auth, async (req, res) => {
 
     await db.query('INSERT INTO votes (user_id, candidate_id) VALUES ($1, $2)', [user_id, candidate_id]);
     await db.query('UPDATE users SET has_voted = true WHERE id = $1', [user_id]);
+
     res.json({ message: 'Voting sukses' });
   } catch (err) {
     console.error(err);
@@ -115,7 +128,7 @@ app.post('/api/vote', auth, async (req, res) => {
   }
 });
 
-// Result untuk admin
+// ========== HASIL UNTUK ADMIN (per kandidat) ==========
 app.get('/api/admin/results', auth, adminOnly, async (req, res) => {
   try {
     const result = await db.query(`
@@ -125,13 +138,13 @@ app.get('/api/admin/results', auth, adminOnly, async (req, res) => {
       GROUP BY c.id
       ORDER BY total_suara DESC
     `);
-    
+
     const voteCounts = result.rows;
-    const totalVotes = voteCounts.reduce((sum, current) => sum + parseInt(current.total_suara, 10), 0);
-    
+    const totalVotes = voteCounts.reduce((sum, c) => sum + parseInt(c.total_suara, 10), 0);
+
     const resultsWithPercentage = voteCounts.map(c => ({
-        ...c,
-        percentage: totalVotes > 0 ? ((c.total_suara / totalVotes) * 100).toFixed(2) : 0
+      ...c,
+      percentage: totalVotes > 0 ? ((c.total_suara / totalVotes) * 100).toFixed(2) : 0
     }));
 
     res.json(resultsWithPercentage);
@@ -140,4 +153,32 @@ app.get('/api/admin/results', auth, adminOnly, async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+// ========== STATISTIK UNTUK DASHBOARD ADMIN ==========
+app.get('/api/admin/stats', auth, adminOnly, async (req, res) => {
+  try {
+    // Total pemilih dan yang sudah memilih
+    const totalPemilih = await db.query('SELECT COUNT(*) FROM users');
+    const sudahMemilih = await db.query('SELECT COUNT(*) FROM users WHERE has_voted = true');
+
+    // Suara per kandidat
+    const kandidat = await db.query(`
+      SELECT c.nama, COUNT(v.id) AS jumlah_suara
+      FROM candidates c
+      LEFT JOIN votes v ON v.candidate_id = c.id
+      GROUP BY c.id
+      ORDER BY c.id
+    `);
+
+    res.json({
+      total_pemilih: parseInt(totalPemilih.rows[0].count, 10),
+      sudah_memilih: parseInt(sudahMemilih.rows[0].count, 10),
+      kandidat: kandidat.rows
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

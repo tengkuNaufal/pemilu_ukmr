@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin - PEMILU UKMR</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="admin.js"></script>
+  <style>
+    body {
+      background: linear-gradient(180deg, #f0fdf4, #dcfce7);
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-6">
+  <h1 class="text-3xl font-bold text-green-700 mb-8 text-center">Dashboard Admin PEMILU UKMR 2025</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
+    <!-- Pie Chart 1: Total Pemilih -->
+    <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center">
+      <h2 class="text-xl font-semibold text-green-700 mb-4">Status Partisipasi Pemilih</h2>
+      <canvas id="totalVoterChart" class="max-w-[300px]"></canvas>
+    </div>
+
+    <!-- Pie Chart 2: Suara Kandidat -->
+    <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center">
+      <h2 class="text-xl font-semibold text-green-700 mb-4">Perolehan Suara Kandidat</h2>
+      <canvas id="candidateChart" class="max-w-[300px]"></canvas>
+    </div>
+  </div>
+
+  <button id="logoutBtn" class="mt-10 bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg">
+    Logout
+  </button>
+</body>
+</html>
