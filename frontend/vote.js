@@ -1,14 +1,14 @@
-async function fetchCandidates() {
-  const res = await fetch('/api/candidates', {
-    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
-  });
-  if (!res.ok) return alert('Gagal ambil kandidat');
-  return res.json();
-}
-
 document.addEventListener('DOMContentLoaded', async () => {
   const candidates = await fetchCandidates();
   const container = document.getElementById('kandidatContainer');
+
+  // --- 🌟 Tambahan ini: sesuaikan grid jika kandidat cuma 2 ---
+  if (candidates.length === 2) {
+    container.className = 'flex justify-center gap-8 flex-wrap z-10';
+  } else {
+    container.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl px-6 w-full z-10';
+  }
+  // -------------------------------------------------------------
 
   candidates.forEach(c => {
     const card = document.createElement('div');
