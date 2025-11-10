@@ -11,10 +11,6 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-app.use((req, res, next) => {
-  return res.status(503).json({ message: 'Sistem sedang dinonaktifkan sementara. Silakan coba lagi nanti.' });
-});
-
 // koneksi PostgreSQL
 const db = new Pool({
   host: process.env.DB_HOST,
