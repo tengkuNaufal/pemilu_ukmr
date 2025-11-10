@@ -7,25 +7,25 @@ Sistem E-Voting berbasis web untuk **Pemilihan Nakhoda Unit Kebudayaan Melayu Ri
 ### 📁 Struktur Proyek
 
 ```
-IF2110-Tubes-01/
+pemilu_ukmr/
 ├── README.md
 ├── .gitignore
 ├── vercel.json
 ├── backend/
 │   ├── server.js                 # Backend Express API
 │   ├── package.json
-├── frontend/
-│   ├── index.html            # Halaman utama e-voting
-│   ├── login.html            # Login untuk pemilih
-│   ├── admin-login.html      # Login untuk admin
-│   ├── admin.html            # Dashboard admin (grafik hasil)
-│   ├── vote.html             # Halaman pemilihan kandidat
-│   ├── thankyou.html         # Halaman ucapan terima kasih
-│   ├── login.js
-│   ├── vote.js
-│   ├── admin-login.js
-│   ├── admin.js
-│   └── images/               # Foto logo
+└── frontend/
+    ├── index.html            # Halaman utama e-voting
+    ├── login.html            # Login untuk pemilih
+    ├── admin-login.html      # Login untuk admin
+    ├── admin.html            # Dashboard admin (grafik hasil)
+    ├── vote.html             # Halaman pemilihan kandidat
+    ├── thankyou.html         # Halaman ucapan terima kasih
+    ├── login.js
+    ├── vote.js
+    ├── admin-login.js
+    ├── admin.js
+    └── images/               # Foto logo
 ```
 
 ---
