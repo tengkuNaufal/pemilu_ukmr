@@ -112,14 +112,17 @@ pemilu_ukmr/
 
 #### Tabel `admins`
 
-| Kolom | Tipe | Keterangan |
+| Kolom     | Tipe | Keterangan |
+|:--|:--:|--:|
 | id | SERIAL PRIMARY KEY | ID unik admin |
 | username | VARCHAR(50) | Nama pengguna admin |
 | password_hash | TEXT | Hash password admin |
 
+
 #### Tabel `candidates`
 
 | Kolom | Tipe | Keterangan |
+|:--|:--:|--:|
 | id | SERIAL PRIMARY KEY | ID kandidat |
 | nama | VARCHAR(100) | Nama kandidat |
 | foto_url | TEXT | Link foto kandidat |
@@ -128,6 +131,7 @@ pemilu_ukmr/
 #### Tabel `votes`
 
 | Kolom | Tipe | Keterangan |
+|:--|:--:|--:|
 | id | SERIAL PRIMARY KEY | ID suara |
 | user_id | INT REFERENCES users(id) | Pemilih |
 | candidate_id | INT REFERENCES candidates(id) | Kandidat yang dipilih |
